@@ -279,7 +279,7 @@ Develop and benchmark new genomic analysis methods in a standardized framework.
 
 ## 🔬 Research
 
-GenomeSim is part of ongoing research at BART (Barzin's Advanced Research & Technology) focused on:
+GenomeSim is part of ongoing research focused on:
 
 - Reducing bias in genomic databases
 - Quantifying uncertainty in computational biology
@@ -296,7 +296,7 @@ This strong copyleft license ensures:
 - ✅ Network use triggers sharing obligations (AGPL clause)
 - ✅ Commercial dual-licensing available
 
-For commercial licensing inquiries, please contact: barzin@bart.network
+For commercial licensing inquiries, please contact: barzin@duck.com
 
 ## 🙏 Acknowledgments
 
@@ -307,7 +307,7 @@ For commercial licensing inquiries, please contact: barzin@bart.network
 ## 📞 Contact
 
 - **Author**: Barzin Lotfabadi
-- **Email**: barzin@bart.network
+- **Email**: barzin@duck.com
 - **GitHub**: [@BarzinL](https://github.com/BarzinL)
 - **Issues**: [GitHub Issues](https://github.com/BarzinL/GenomeSim/issues)
 
