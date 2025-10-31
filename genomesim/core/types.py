@@ -10,9 +10,9 @@ This module defines the fundamental types used throughout the platform:
 """
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, List, Any, Optional
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
 
 
 class SequenceScale(Enum):
@@ -23,15 +23,16 @@ class SequenceScale(Enum):
     to complete genomes. Analysis at each scale informs the next, with
     uncertainty propagating upward.
     """
-    NUCLEOTIDE = "nucleotide"      # Individual bases (A, T, G, C)
-    MOTIF = "motif"                # Short patterns (6-20 bp): TFBS, splice sites
-    DOMAIN = "domain"              # Functional units: protein domains, RNA structures
-    GENE = "gene"                  # Complete genes with regulatory elements
-    OPERON = "operon"              # Gene clusters (primarily prokaryotic)
-    CHROMOSOME = "chromosome"      # Full chromosomes
-    GENOME = "genome"              # Complete genomes
 
-    def __lt__(self, other: 'SequenceScale') -> bool:
+    NUCLEOTIDE = "nucleotide"  # Individual bases (A, T, G, C)
+    MOTIF = "motif"  # Short patterns (6-20 bp): TFBS, splice sites
+    DOMAIN = "domain"  # Functional units: protein domains, RNA structures
+    GENE = "gene"  # Complete genes with regulatory elements
+    OPERON = "operon"  # Gene clusters (primarily prokaryotic)
+    CHROMOSOME = "chromosome"  # Full chromosomes
+    GENOME = "genome"  # Complete genomes
+
+    def __lt__(self, other: "SequenceScale") -> bool:
         """Define ordering for scale hierarchy."""
         if not isinstance(other, SequenceScale):
             return NotImplemented
@@ -47,7 +48,7 @@ class SequenceScale(Enum):
         ]
         return order.index(self) < order.index(other)
 
-    def __gt__(self, other: 'SequenceScale') -> bool:
+    def __gt__(self, other: "SequenceScale") -> bool:
         """Define ordering for scale hierarchy."""
         if not isinstance(other, SequenceScale):
             return NotImplemented
@@ -65,11 +66,12 @@ class AnalysisType(Enum):
     - EVOLUTIONARY: How did it get here?
     - REGULATORY: How is it controlled?
     """
-    STRUCTURAL = "structural"          # Physical structure: ORFs, genes, exons
-    COMPOSITIONAL = "compositional"    # Sequence composition: GC content, repeats
-    FUNCTIONAL = "functional"          # Biological function: protein activity, pathways
-    EVOLUTIONARY = "evolutionary"      # Evolutionary history: conservation, homology
-    REGULATORY = "regulatory"          # Gene regulation: promoters, enhancers, TFBSs
+
+    STRUCTURAL = "structural"  # Physical structure: ORFs, genes, exons
+    COMPOSITIONAL = "compositional"  # Sequence composition: GC content, repeats
+    FUNCTIONAL = "functional"  # Biological function: protein activity, pathways
+    EVOLUTIONARY = "evolutionary"  # Evolutionary history: conservation, homology
+    REGULATORY = "regulatory"  # Gene regulation: promoters, enhancers, TFBSs
 
 
 @dataclass
@@ -99,6 +101,7 @@ class Confidence:
         ...     }
         ... )
     """
+
     score: float
     method: str
     sources: List[str]
@@ -107,9 +110,7 @@ class Confidence:
     def __post_init__(self):
         """Validate confidence score is in valid range [0.0, 1.0]."""
         if not 0.0 <= self.score <= 1.0:
-            raise ValueError(
-                f"Confidence score must be between 0.0 and 1.0, got {self.score}"
-            )
+            raise ValueError(f"Confidence score must be between 0.0 and 1.0, got {self.score}")
 
         if not self.sources:
             raise ValueError("Confidence must have at least one source")
@@ -142,7 +143,7 @@ class Confidence:
         else:
             return "Very low"
 
-    def combine_with(self, other: 'Confidence', weight_self: float = 0.5) -> 'Confidence':
+    def combine_with(self, other: "Confidence", weight_self: float = 0.5) -> "Confidence":
         """
         Combine this confidence with another, using weighted average.
 
@@ -197,6 +198,7 @@ class Provenance:
         ...     references=["https://www.ncbi.nlm.nih.gov/orffinder/"]
         ... )
     """
+
     analyzer: str
     version: str
     parameters: Dict[str, Any]
@@ -207,11 +209,9 @@ class Provenance:
     def __post_init__(self):
         """Validate timestamp format."""
         try:
-            datetime.fromisoformat(self.timestamp.replace('Z', '+00:00'))
+            datetime.fromisoformat(self.timestamp.replace("Z", "+00:00"))
         except ValueError:
-            raise ValueError(
-                f"Timestamp must be in ISO 8601 format, got: {self.timestamp}"
-            )
+            raise ValueError(f"Timestamp must be in ISO 8601 format, got: {self.timestamp}")
 
     @staticmethod
     def create_now(
@@ -220,7 +220,7 @@ class Provenance:
         parameters: Dict[str, Any],
         dependencies: Optional[List[str]] = None,
         references: Optional[List[str]] = None,
-    ) -> 'Provenance':
+    ) -> "Provenance":
         """
         Create Provenance with current timestamp.
 
@@ -234,7 +234,7 @@ class Provenance:
         Returns:
             Provenance object with current timestamp
         """
-        timestamp = datetime.utcnow().isoformat() + 'Z'
+        timestamp = datetime.utcnow().isoformat() + "Z"
         return Provenance(
             analyzer=analyzer,
             version=version,
@@ -274,6 +274,7 @@ class GenomicFeature:
         ...     provenance=Provenance.create_now("GeneFinder", "0.1.0", {})
         ... )
     """
+
     start: int
     end: int
     strand: str
@@ -293,14 +294,14 @@ class GenomicFeature:
                 f"End position must be greater than start, got start={self.start}, end={self.end}"
             )
 
-        if self.strand not in ('+', '-'):
+        if self.strand not in ("+", "-"):
             raise ValueError(f"Strand must be '+' or '-', got {self.strand}")
 
     def length(self) -> int:
         """Return the length of this feature in base pairs."""
         return self.end - self.start
 
-    def overlaps(self, other: 'GenomicFeature') -> bool:
+    def overlaps(self, other: "GenomicFeature") -> bool:
         """
         Check if this feature overlaps with another feature.
 
@@ -318,7 +319,7 @@ class GenomicFeature:
         # Check coordinate overlap
         return not (self.end <= other.start or other.end <= self.start)
 
-    def distance_to(self, other: 'GenomicFeature') -> int:
+    def distance_to(self, other: "GenomicFeature") -> int:
         """
         Calculate distance to another feature.
 
@@ -360,9 +361,9 @@ class GenomicFeature:
 
         # Build attributes string
         attr_parts = []
-        if 'id' in self.attributes:
+        if "id" in self.attributes:
             attr_parts.append(f"ID={self.attributes['id']}")
-        if 'name' in self.attributes:
+        if "name" in self.attributes:
             attr_parts.append(f"Name={self.attributes['name']}")
 
         # Add confidence details
@@ -371,12 +372,14 @@ class GenomicFeature:
 
         # Add other attributes
         for key, value in self.attributes.items():
-            if key not in ('id', 'name'):
+            if key not in ("id", "name"):
                 attr_parts.append(f"{key}={value}")
 
         attributes = ";".join(attr_parts)
 
-        return f"{seqid}\t{source}\t{ftype}\t{start}\t{end}\t{score}\t{strand}\t{phase}\t{attributes}"
+        return (
+            f"{seqid}\t{source}\t{ftype}\t{start}\t{end}\t{score}\t{strand}\t{phase}\t{attributes}"
+        )
 
     def __str__(self) -> str:
         """Human-readable feature description."""

@@ -10,11 +10,11 @@ This example shows how to work with:
 """
 
 from genomesim.core import (
-    SequenceScale,
     AnalysisType,
     Confidence,
-    Provenance,
     GenomicFeature,
+    Provenance,
+    SequenceScale,
 )
 
 

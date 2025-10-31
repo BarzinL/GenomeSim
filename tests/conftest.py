@@ -5,7 +5,8 @@ This module provides common fixtures used across the test suite.
 """
 
 import pytest
-from genomesim.core.types import Confidence, Provenance, GenomicFeature
+
+from genomesim.core.types import Confidence, GenomicFeature, Provenance
 
 
 @pytest.fixture
@@ -18,7 +19,7 @@ def sample_confidence():
         supporting_evidence={
             "test_source_1": 0.9,
             "test_source_2": 0.8,
-        }
+        },
     )
 
 
@@ -41,12 +42,12 @@ def sample_feature(sample_confidence, sample_provenance):
     return GenomicFeature(
         start=1000,
         end=2000,
-        strand='+',
-        feature_type='gene',
+        strand="+",
+        feature_type="gene",
         confidence=sample_confidence,
-        attributes={'name': 'test_gene', 'id': 'gene_001'},
+        attributes={"name": "test_gene", "id": "gene_001"},
         provenance=sample_provenance,
-        sequence_id='chr1',
+        sequence_id="chr1",
     )
 
 

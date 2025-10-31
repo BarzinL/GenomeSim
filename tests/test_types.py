@@ -9,14 +9,16 @@ This module tests all core data types including:
 - GenomicFeature dataclass
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
+
 from genomesim.core.types import (
-    SequenceScale,
     AnalysisType,
     Confidence,
-    Provenance,
     GenomicFeature,
+    Provenance,
+    SequenceScale,
 )
 
 
@@ -25,10 +27,7 @@ class TestSequenceScale:
 
     def test_all_scales_defined(self):
         """Test that all expected scales are defined."""
-        expected = {
-            "NUCLEOTIDE", "MOTIF", "DOMAIN", "GENE",
-            "OPERON", "CHROMOSOME", "GENOME"
-        }
+        expected = {"NUCLEOTIDE", "MOTIF", "DOMAIN", "GENE", "OPERON", "CHROMOSOME", "GENOME"}
         actual = {scale.name for scale in SequenceScale}
         assert actual == expected
 
@@ -52,10 +51,7 @@ class TestAnalysisType:
 
     def test_all_types_defined(self):
         """Test that all expected analysis types are defined."""
-        expected = {
-            "STRUCTURAL", "COMPOSITIONAL", "FUNCTIONAL",
-            "EVOLUTIONARY", "REGULATORY"
-        }
+        expected = {"STRUCTURAL", "COMPOSITIONAL", "FUNCTIONAL", "EVOLUTIONARY", "REGULATORY"}
         actual = {atype.name for atype in AnalysisType}
         assert actual == expected
 
@@ -71,10 +67,7 @@ class TestConfidence:
     def test_valid_confidence_creation(self):
         """Test creating a valid Confidence object."""
         conf = Confidence(
-            score=0.75,
-            method="test",
-            sources=["source1"],
-            supporting_evidence={"source1": 0.75}
+            score=0.75, method="test", sources=["source1"], supporting_evidence={"source1": 0.75}
         )
         assert conf.score == 0.75
         assert conf.method == "test"
@@ -170,6 +163,7 @@ class TestProvenance:
     def test_provenance_create_now(self):
         """Test create_now() factory method."""
         from datetime import timezone
+
         before = datetime.now(timezone.utc)
         prov = Provenance.create_now(
             analyzer="TestAnalyzer",
@@ -179,7 +173,7 @@ class TestProvenance:
         after = datetime.now(timezone.utc)
 
         # Parse timestamp
-        ts = datetime.fromisoformat(prov.timestamp.replace('Z', '+00:00'))
+        ts = datetime.fromisoformat(prov.timestamp.replace("Z", "+00:00"))
 
         # Should be created between before and after
         assert before <= ts <= after
@@ -214,38 +208,38 @@ class TestGenomicFeature:
         feature = GenomicFeature(
             start=100,
             end=200,
-            strand='+',
-            feature_type='gene',
+            strand="+",
+            feature_type="gene",
             confidence=sample_confidence,
             attributes={},
             provenance=sample_provenance,
         )
         assert feature.start == 100
         assert feature.end == 200
-        assert feature.strand == '+'
+        assert feature.strand == "+"
 
     def test_feature_coordinate_validation(self, sample_confidence, sample_provenance):
         """Test that feature coordinates are validated."""
         # Start must be non-negative
         with pytest.raises(ValueError, match="non-negative"):
-            GenomicFeature(-1, 100, '+', 'gene', sample_confidence, {}, sample_provenance)
+            GenomicFeature(-1, 100, "+", "gene", sample_confidence, {}, sample_provenance)
 
         # End must be greater than start
         with pytest.raises(ValueError, match="greater than start"):
-            GenomicFeature(100, 100, '+', 'gene', sample_confidence, {}, sample_provenance)
+            GenomicFeature(100, 100, "+", "gene", sample_confidence, {}, sample_provenance)
 
         with pytest.raises(ValueError, match="greater than start"):
-            GenomicFeature(100, 50, '+', 'gene', sample_confidence, {}, sample_provenance)
+            GenomicFeature(100, 50, "+", "gene", sample_confidence, {}, sample_provenance)
 
     def test_feature_strand_validation(self, sample_confidence, sample_provenance):
         """Test that strand must be + or -."""
         # Valid strands
-        GenomicFeature(0, 100, '+', 'gene', sample_confidence, {}, sample_provenance)
-        GenomicFeature(0, 100, '-', 'gene', sample_confidence, {}, sample_provenance)
+        GenomicFeature(0, 100, "+", "gene", sample_confidence, {}, sample_provenance)
+        GenomicFeature(0, 100, "-", "gene", sample_confidence, {}, sample_provenance)
 
         # Invalid strand
         with pytest.raises(ValueError, match="Strand must be"):
-            GenomicFeature(0, 100, '?', 'gene', sample_confidence, {}, sample_provenance)
+            GenomicFeature(0, 100, "?", "gene", sample_confidence, {}, sample_provenance)
 
     def test_feature_length(self, sample_feature):
         """Test length() method."""
@@ -254,24 +248,16 @@ class TestGenomicFeature:
     def test_feature_overlaps(self, sample_confidence, sample_provenance):
         """Test overlaps() method."""
         feature1 = GenomicFeature(
-            100, 200, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            100, 200, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
         feature2 = GenomicFeature(
-            150, 250, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            150, 250, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
         feature3 = GenomicFeature(
-            250, 350, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            250, 350, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
         feature4 = GenomicFeature(
-            100, 200, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr2'
+            100, 200, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr2"
         )
 
         # Overlapping features
@@ -288,19 +274,13 @@ class TestGenomicFeature:
     def test_feature_distance(self, sample_confidence, sample_provenance):
         """Test distance_to() method."""
         feature1 = GenomicFeature(
-            100, 200, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            100, 200, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
         feature2 = GenomicFeature(
-            150, 250, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            150, 250, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
         feature3 = GenomicFeature(
-            300, 400, '+', 'gene',
-            sample_confidence, {}, sample_provenance,
-            sequence_id='chr1'
+            300, 400, "+", "gene", sample_confidence, {}, sample_provenance, sequence_id="chr1"
         )
 
         # Overlapping = distance 0
@@ -315,24 +295,24 @@ class TestGenomicFeature:
         gff3 = sample_feature.to_gff3()
 
         # Should be tab-separated with 9 fields
-        fields = gff3.split('\t')
+        fields = gff3.split("\t")
         assert len(fields) == 9
 
         # Check key fields
-        assert fields[0] == 'chr1'  # seqid
-        assert fields[2] == 'gene'  # type
-        assert fields[3] == '1001'  # start (1-based)
-        assert fields[4] == '2000'  # end
-        assert fields[6] == '+'  # strand
+        assert fields[0] == "chr1"  # seqid
+        assert fields[2] == "gene"  # type
+        assert fields[3] == "1001"  # start (1-based)
+        assert fields[4] == "2000"  # end
+        assert fields[6] == "+"  # strand
 
         # Check attributes field contains confidence
-        assert 'confidence=' in fields[8]
+        assert "confidence=" in fields[8]
 
     def test_feature_string_representation(self, sample_feature):
         """Test __str__ method."""
         s = str(sample_feature)
-        assert 'gene' in s
-        assert 'chr1' in s
-        assert '1000' in s
-        assert '2000' in s
-        assert '+' in s
+        assert "gene" in s
+        assert "chr1" in s
+        assert "1000" in s
+        assert "2000" in s
+        assert "+" in s

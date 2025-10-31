@@ -7,11 +7,12 @@ and enable the plugin architecture.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from genomesim.core.types import (
-    SequenceScale,
     AnalysisType,
     GenomicFeature,
+    SequenceScale,
 )
 
 
@@ -107,10 +108,7 @@ class SequenceAnalyzer(ABC):
 
     @abstractmethod
     def analyze(
-        self,
-        sequence: str,
-        sequence_id: Optional[str] = None,
-        **kwargs
+        self, sequence: str, sequence_id: Optional[str] = None, **kwargs
     ) -> List[GenomicFeature]:
         """
         Analyze sequence and return predicted features.
@@ -156,7 +154,7 @@ class SequenceAnalyzer(ABC):
         Raises:
             ValueError: If sequence contains invalid characters
         """
-        valid_bases = set('ATGCUN')
+        valid_bases = set("ATGCUN")
         sequence_upper = sequence.upper()
         invalid_chars = set(sequence_upper) - valid_bases
 
@@ -177,6 +175,7 @@ class SequenceAnalyzer(ABC):
             Version string (semantic versioning)
         """
         from genomesim import __version__
+
         return __version__
 
     def __str__(self) -> str:
@@ -260,11 +259,7 @@ class ScaleBridge(ABC):
         pass
 
     @abstractmethod
-    def bridge(
-        self,
-        lower_scale_features: List[GenomicFeature],
-        **kwargs
-    ) -> List[GenomicFeature]:
+    def bridge(self, lower_scale_features: List[GenomicFeature], **kwargs) -> List[GenomicFeature]:
         """
         Integrate lower-scale features into higher-scale predictions.
 
@@ -307,7 +302,7 @@ class ScaleBridge(ABC):
         self,
         confidences: List[float],
         method: str = "weighted_average",
-        weights: Optional[List[float]] = None
+        weights: Optional[List[float]] = None,
     ) -> float:
         """
         Aggregate multiple confidence scores into a single score.
@@ -361,7 +356,4 @@ class ScaleBridge(ABC):
 
     def __str__(self) -> str:
         """Human-readable bridge description."""
-        return (
-            f"{self.name} "
-            f"[{self.input_scale.value} → {self.output_scale.value}]"
-        )
+        return f"{self.name} " f"[{self.input_scale.value} → {self.output_scale.value}]"

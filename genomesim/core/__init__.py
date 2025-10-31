@@ -7,16 +7,16 @@ This module contains the fundamental building blocks for genomic analysis:
 - Abstract interfaces (analyzers, scale bridges)
 """
 
+from genomesim.core.interfaces import (
+    ScaleBridge,
+    SequenceAnalyzer,
+)
 from genomesim.core.types import (
-    SequenceScale,
     AnalysisType,
     Confidence,
-    Provenance,
     GenomicFeature,
-)
-from genomesim.core.interfaces import (
-    SequenceAnalyzer,
-    ScaleBridge,
+    Provenance,
+    SequenceScale,
 )
 
 __all__ = [

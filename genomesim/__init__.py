@@ -14,16 +14,16 @@ __version__ = "0.1.0"
 __author__ = "Barzin Lotfabadi"
 __license__ = "AGPLv3"
 
+from genomesim.core.interfaces import (
+    ScaleBridge,
+    SequenceAnalyzer,
+)
 from genomesim.core.types import (
-    SequenceScale,
     AnalysisType,
     Confidence,
-    Provenance,
     GenomicFeature,
-)
-from genomesim.core.interfaces import (
-    SequenceAnalyzer,
-    ScaleBridge,
+    Provenance,
+    SequenceScale,
 )
 
 __all__ = [

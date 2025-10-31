@@ -6,16 +6,18 @@ This module tests the abstract interfaces:
 - ScaleBridge
 """
 
+from typing import Any, Dict, List
+
 import pytest
-from genomesim.core.interfaces import SequenceAnalyzer, ScaleBridge
+
+from genomesim.core.interfaces import ScaleBridge, SequenceAnalyzer
 from genomesim.core.types import (
-    SequenceScale,
     AnalysisType,
-    GenomicFeature,
     Confidence,
+    GenomicFeature,
     Provenance,
+    SequenceScale,
 )
-from typing import Dict, List, Any
 
 
 class SimpleTestAnalyzer(SequenceAnalyzer):
@@ -47,7 +49,7 @@ class SimpleTestAnalyzer(SequenceAnalyzer):
             score=1.0,
             method="direct_measurement",
             sources=["sequence_length"],
-            supporting_evidence={"length": len(sequence)}
+            supporting_evidence={"length": len(sequence)},
         )
         prov = Provenance.create_now(
             analyzer=self.name,
@@ -58,10 +60,10 @@ class SimpleTestAnalyzer(SequenceAnalyzer):
             GenomicFeature(
                 start=0,
                 end=len(sequence),
-                strand='+',
-                feature_type='test_feature',
+                strand="+",
+                feature_type="test_feature",
                 confidence=conf,
-                attributes={'length': len(sequence)},
+                attributes={"length": len(sequence)},
                 provenance=prov,
                 sequence_id=sequence_id,
             )
@@ -86,11 +88,7 @@ class SimpleTestBridge(ScaleBridge):
     def output_scale(self) -> SequenceScale:
         return SequenceScale.GENE
 
-    def bridge(
-        self,
-        lower_scale_features: List[GenomicFeature],
-        **kwargs
-    ) -> List[GenomicFeature]:
+    def bridge(self, lower_scale_features: List[GenomicFeature], **kwargs) -> List[GenomicFeature]:
         # Simple bridge: combine all input features into one gene
         if not lower_scale_features:
             return []
@@ -106,7 +104,7 @@ class SimpleTestBridge(ScaleBridge):
             score=avg_conf,
             method="aggregated",
             sources=["motif_integration"],
-            supporting_evidence={"num_motifs": len(lower_scale_features)}
+            supporting_evidence={"num_motifs": len(lower_scale_features)},
         )
 
         prov = Provenance.create_now(
@@ -120,8 +118,8 @@ class SimpleTestBridge(ScaleBridge):
             GenomicFeature(
                 start=start,
                 end=end,
-                strand='+',
-                feature_type='gene',
+                strand="+",
+                feature_type="gene",
                 confidence=conf,
                 attributes={},
                 provenance=prov,
@@ -154,7 +152,7 @@ class TestSequenceAnalyzer:
         assert len(features) == 1
         assert features[0].start == 0
         assert features[0].end == len(sequence)
-        assert features[0].feature_type == 'test_feature'
+        assert features[0].feature_type == "test_feature"
 
     def test_analyzer_validate_sequence(self):
         """Test sequence validation."""
@@ -209,16 +207,16 @@ class TestScaleBridge:
         prov = Provenance.create_now("TestAnalyzer", "1.0", {})
 
         motifs = [
-            GenomicFeature(100, 120, '+', 'motif', conf, {}, prov),
-            GenomicFeature(500, 520, '+', 'motif', conf, {}, prov),
-            GenomicFeature(800, 820, '+', 'motif', conf, {}, prov),
+            GenomicFeature(100, 120, "+", "motif", conf, {}, prov),
+            GenomicFeature(500, 520, "+", "motif", conf, {}, prov),
+            GenomicFeature(800, 820, "+", "motif", conf, {}, prov),
         ]
 
         genes = bridge.bridge(motifs)
         assert len(genes) == 1
         assert genes[0].start == 100
         assert genes[0].end == 820
-        assert genes[0].feature_type == 'gene'
+        assert genes[0].feature_type == "gene"
 
     def test_bridge_aggregate_confidence_weighted_average(self):
         """Test aggregate_confidence() with weighted average."""
@@ -230,9 +228,7 @@ class TestScaleBridge:
 
         # With custom weights
         result = bridge.aggregate_confidence(
-            confidences,
-            method="weighted_average",
-            weights=[2.0, 1.0, 1.0]
+            confidences, method="weighted_average", weights=[2.0, 1.0, 1.0]
         )
         expected = (0.8 * 2.0 + 0.6 * 1.0 + 0.9 * 1.0) / 4.0
         assert result == pytest.approx(expected)
@@ -251,7 +247,7 @@ class TestScaleBridge:
 
         confidences = [0.8, 0.5, 0.9]
         result = bridge.aggregate_confidence(confidences, method="geometric_mean")
-        expected = (0.8 * 0.5 * 0.9) ** (1/3)
+        expected = (0.8 * 0.5 * 0.9) ** (1 / 3)
         assert result == pytest.approx(expected)
 
     def test_bridge_aggregate_confidence_empty(self):
@@ -271,9 +267,7 @@ class TestScaleBridge:
         bridge = SimpleTestBridge()
         with pytest.raises(ValueError, match="Weights length"):
             bridge.aggregate_confidence(
-                [0.8, 0.6],
-                method="weighted_average",
-                weights=[1.0, 1.0, 1.0]  # Wrong length
+                [0.8, 0.6], method="weighted_average", weights=[1.0, 1.0, 1.0]  # Wrong length
             )
 
     def test_bridge_string_representation(self):
@@ -313,7 +307,7 @@ class TestAnalyzerIntegration:
                 start=f.start,
                 end=f.end,
                 strand=f.strand,
-                feature_type='motif',  # Change type
+                feature_type="motif",  # Change type
                 confidence=f.confidence,
                 attributes=f.attributes,
                 provenance=f.provenance,
@@ -324,7 +318,7 @@ class TestAnalyzerIntegration:
 
         genes = bridge.bridge(motif_features)
         assert len(genes) == 1
-        assert genes[0].feature_type == 'gene'
+        assert genes[0].feature_type == "gene"
 
         # Check provenance tracking
         assert analyzer.name in genes[0].provenance.dependencies
