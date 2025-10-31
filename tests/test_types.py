@@ -125,7 +125,7 @@ class TestConfidence:
 
         # Different weights
         combined = conf1.combine_with(conf2, weight_self=0.75)
-        assert combined.score == 0.75  # 0.8 * 0.75 + 0.6 * 0.25
+        assert combined.score == pytest.approx(0.75)  # 0.8 * 0.75 + 0.6 * 0.25
 
         # Combined sources
         assert set(combined.sources) == {"s1", "s2"}
@@ -169,13 +169,14 @@ class TestProvenance:
 
     def test_provenance_create_now(self):
         """Test create_now() factory method."""
-        before = datetime.utcnow()
+        from datetime import timezone
+        before = datetime.now(timezone.utc)
         prov = Provenance.create_now(
             analyzer="TestAnalyzer",
             version="1.0.0",
             parameters={"test": True},
         )
-        after = datetime.utcnow()
+        after = datetime.now(timezone.utc)
 
         # Parse timestamp
         ts = datetime.fromisoformat(prov.timestamp.replace('Z', '+00:00'))
