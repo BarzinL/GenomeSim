@@ -377,7 +377,7 @@ def test_analyzer_performance(benchmark):
 
 - Never commit sensitive data (genomes, API keys)
 - Use `.gitignore` to exclude data files
-- Report security issues privately to barzin@bart.network
+- Report security issues privately to barzin@duck.com
 - Do not include patient data in tests
 
 ## 📄 License
@@ -407,7 +407,7 @@ We are committed to providing a welcoming and inclusive experience for everyone.
 
 ### Enforcement
 
-Violations can be reported to barzin@bart.network. All complaints will be reviewed and investigated.
+Violations can be reported to barzin@duck.com. All complaints will be reviewed and investigated.
 
 ## 💬 Getting Help
 
